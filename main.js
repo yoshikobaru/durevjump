@@ -41,25 +41,46 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Добавим управление балансами
+    // Инициализация балансов из localStorage
     const balances = {
-        total: 1100,
-        tasks: 450,
-        friends: 450,
-        game: 450
+        total: parseInt(localStorage.getItem('totalBalance')) || 0,
+        tasks: parseInt(localStorage.getItem('tasksBalance')) || 0,
+        friends: parseInt(localStorage.getItem('friendsBalance')) || 0,
+        game: parseInt(localStorage.getItem('gameBalance')) || 0
     };
 
+    // Функция обновления балансов
     function updateBalances() {
-        const totalBalance = document.querySelector('.total-balance');
-        const tasksBalance = document.querySelector('.tasks-balance');
-        const friendsBalance = document.querySelector('.friends-balance');
-        const gameBalance = document.querySelector('.game-balance');
+        // Обновляем отображение на странице
+        document.querySelector('.text-lg.font-bold').textContent = `${balances.total} DPS`;
+        
+        // Обновляем балансы в карточках
+        const balanceCards = document.querySelectorAll('.text-black.font-bold.text-base');
+        balanceCards[0].textContent = `+${balances.tasks} DPS`;
+        balanceCards[1].textContent = `+${balances.friends} DPS`;
+        balanceCards[2].textContent = `+${balances.game} DPS`;
 
-        if (totalBalance) totalBalance.textContent = `${balances.total} DPS`;
-        if (tasksBalance) tasksBalance.textContent = `+${balances.tasks} DPS`;
-        if (friendsBalance) friendsBalance.textContent = `+${balances.friends} DPS`;
-        if (gameBalance) gameBalance.textContent = `+${balances.game} DPS`;
+        // Сохраняем в localStorage
+        localStorage.setItem('totalBalance', balances.total);
+        localStorage.setItem('tasksBalance', balances.tasks);
+        localStorage.setItem('friendsBalance', balances.friends);
+        localStorage.setItem('gameBalance', balances.game);
     }
+
+    // Функция для добавления очков
+    window.addPoints = function(amount, type) {
+        // Получаем текущие значения из localStorage
+        balances[type] += amount;  // Добавляем новые очки к существующим
+        balances.total = balances.tasks + balances.friends + balances.game;
+        
+        // Обновляем отображение и сохраняем
+        updateBalances();
+    };
+
+    // Добавляем функцию для получения текущего баланса
+    window.getBalance = function(type) {
+        return balances[type];
+    };
 
     // Вызываем обновление балансов при загрузке страницы
     updateBalances();

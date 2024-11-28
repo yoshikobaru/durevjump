@@ -760,6 +760,9 @@ class DoodleGame {
     handleGameOver() {
         this.isGameOver = true;
         
+        // Добавляем очки только за текущую игру
+        window.addPoints(this.score, 'game');
+        
         // Обновляем лучший счет
         if (this.score > this.bestScore) {
             this.bestScore = this.score;
@@ -767,8 +770,14 @@ class DoodleGame {
         }
         
         // Обновляем элементы интерфейса
-        document.getElementById('finalScore').textContent = this.score;
+        document.getElementById('finalScore').textContent = this.score; // Показываем счет текущей игры
         document.getElementById('bestScore').textContent = this.bestScore;
+        
+        // Показываем выигрыш за текущую игру
+        const gameOverScoreElement = document.querySelector('#gameOver .text-xl:last-child');
+        if (gameOverScoreElement) {
+            gameOverScoreElement.textContent = `+${this.score} DPS`;
+        }
         
         // Обновляем счет на стартовом экране
         document.getElementById('bestScoreStart').textContent = this.bestScore;

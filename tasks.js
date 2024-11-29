@@ -5,19 +5,94 @@ document.addEventListener('DOMContentLoaded', function() {
                 id: 'dailytask',
                 name: 'Daily Task', 
                 reward: 1222,
-                cooldown: 10000 // 10 секунд в миллисекундах
+                cooldown: 10000, // 10 секунд в миллисекундах
+                type: 'daily',   // Добавляем тип
+                storageKey: 'dailyTaskCompleted'  // Добавляем ключ для хранения состояния
             },
-            { name: 'Name Daily Task', reward: 150 },
-            { name: 'Name Daily Task', reward: 150 },
-            { name: 'Name Daily Task', reward: 150 }
+            { 
+                id: 'playgames',
+                name: 'Сыграть 5 игр', 
+                reward: 444,
+                required: 5,
+                progress: parseInt(localStorage.getItem('gamesPlayedProgress') || '0'),
+                type: 'progress'
+            },
+            { 
+                id: 'collectplanes',
+                name: 'Собрать самолётики', 
+                reward: 390,
+                required: 10,
+                progress: parseInt(localStorage.getItem('planesCollectedProgress') || '0'),
+                type: 'progress'
+            },
+            { 
+                id: 'breakplatforms',
+                name: 'Сломать фейк платформы', 
+                reward: 377,
+                required: 6,
+                progress: parseInt(localStorage.getItem('platformsBrokenProgress') || '0'),
+                type: 'progress'
+            },
+            { 
+                id: 'usesprings',
+                name: 'Прыгнуть на пружинках', 
+                reward: 400,
+                required: 25,
+                progress: parseInt(localStorage.getItem('springsUsedProgress') || '0'),
+                type: 'progress'
+            }
         ],
         social: [
-            { name: 'Social Task 1', reward: 200 },
-            { name: 'Social Task 2', reward: 200 }
+            { 
+                id: 'playmethod',
+                name: 'Сыграть в Method', 
+                reward: 15000,
+                link: 'https://t.me/MethodTon_Bot',
+                type: 'social',
+                storageKey: 'methodTaskCompleted'
+            },
+            { 
+                id: 'playdino',
+                name: 'Сыграть в DINO', 
+                reward: 12000,
+                link: 'https://t.me/Dinosaur_Gamebot',
+                type: 'social',
+                storageKey: 'dinoTaskCompleted'
+            },
+            { 
+                id: 'playlitwin',
+                name: 'Сыграть в Litwin', 
+                reward: 13000,
+                link: 'https://t.me/LITWIN_TAP_BOT',
+                type: 'social',
+                storageKey: 'litwinTaskCompleted'
+            }
         ],
         media: [
-            { name: 'Media Task 1', reward: 300 },
-            { name: 'Media Task 2', reward: 300 }
+            { 
+                id: 'methodpost',
+                name: 'Посмотреть пост в Method', 
+                reward: 7500,
+                link: 'https://t.me/method_community',
+                type: 'social',
+                storageKey: 'methodPostCompleted'
+            },
+            { 
+                id: 'dinonews',
+                name: 'Посмотреть новости DINO', 
+                reward: 7500,
+                link: 'https://t.me/DinoRushNews',
+                type: 'social',
+                storageKey: 'dinoNewsCompleted'
+            },
+            { 
+                id: 'litwinnews',
+                name: 'Посмотреть новости Litwin', 
+                reward: 7500,
+                link: 'https://t.me/litwin_community',
+                type: 'social',
+                storageKey: 'litwinNewsCompleted'
+            }
         ],
         refs: [
             { name: 'Referral Task 1', reward: 400 },
@@ -27,45 +102,101 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function renderTasks(category = 'daily') {
         const container = document.getElementById('tasks-container');
-        if (!container) {
-            console.error('Tasks container not found!');
-            return;
-        }
+        if (!container) return;
         
         container.innerHTML = '';
 
         taskCategories[category].forEach(task => {
-            const lastClaimTime = localStorage.getItem(`${task.id}_lastClaim`);
-            const now = Date.now();
-            const isOnCooldown = lastClaimTime && (now - parseInt(lastClaimTime) < task.cooldown);
-            
-            const taskElement = `
-                <div class="flex items-center justify-between p-4">
-                    <div class="flex items-center gap-4">
-                        <div class="w-6 h-6 rounded-full border-2 border-white"></div>
-                        <div class="text-white">
-                            <div class="text-lg">${task.name}</div>
-                            <div class="text-sm">
-                                ${isOnCooldown ? 'Cooldown' : `+${task.reward} DPS`}
+            if (task.type === 'social') {
+                const isCompleted = localStorage.getItem(task.storageKey) === 'true';
+                
+                const taskElement = `
+                    <div class="flex items-center justify-between p-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-6 h-6 rounded-full border-2 border-white 
+                                ${isCompleted ? 'bg-green-500' : ''}"></div>
+                            <div class="text-white">
+                                <div class="text-lg">${task.name}</div>
+                                <div class="text-sm">+${task.reward} DPS</div>
                             </div>
                         </div>
+                        <button 
+                            class="task-start-btn" 
+                            data-task-id="${task.id}"
+                            data-reward="${task.reward}"
+                            data-link="${task.link}"
+                            data-storage-key="${task.storageKey}"
+                            data-type="social"
+                            ${isCompleted ? 'disabled' : ''}
+                        >
+                            <img src="start.png" alt="Начать" 
+                                class="h-8 ${isCompleted ? 'opacity-50' : ''}">
+                        </button>
                     </div>
-                    <button 
-                        class="task-start-btn" 
-                        data-task-id="${task.id}"
-                        data-reward="${task.reward}"
-                        data-cooldown="${task.cooldown}"
-                        ${isOnCooldown ? 'disabled' : ''}
-                    >
-                        <img src="start.png" alt="Начать" class="h-8 ${isOnCooldown ? 'opacity-50' : ''}">
-                    </button>
-                </div>
-            `;
-            container.innerHTML += taskElement;
+                `;
+                container.innerHTML += taskElement;
+            } else if (task.type === 'progress') {
+                if (task.id === 'collectplanes') {
+                    task.progress = parseInt(localStorage.getItem('planesCollectedProgress') || '0');
+                }
+                
+                const taskElement = `
+                    <div class="flex items-center justify-between p-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-6 h-6 rounded-full border-2 border-white"></div>
+                            <div class="text-white">
+                                <div class="text-lg">${task.name}</div>
+                                <div class="text-sm">
+                                    ${task.progress}/${task.required} • +${task.reward} DPS
+                                </div>
+                            </div>
+                        </div>
+                        <button 
+                            class="task-start-btn" 
+                            data-task-id="${task.id}"
+                            data-reward="${task.reward}"
+                            data-type="progress"
+                            ${task.progress < task.required ? 'disabled' : ''}
+                        >
+                            <img src="start.png" alt="Начать" class="h-8 ${task.progress < task.required ? 'opacity-50' : ''}">
+                        </button>
+                    </div>
+                `;
+                container.innerHTML += taskElement;
+            } else if (task.type === 'daily') {
+                const isCompleted = localStorage.getItem(task.storageKey) === 'true';
+                const lastCompletedTime = parseInt(localStorage.getItem(`${task.storageKey}_time`) || '0');
+                const currentTime = Date.now();
+                const isOnCooldown = currentTime - lastCompletedTime < task.cooldown;
+                
+                const taskElement = `
+                    <div class="flex items-center justify-between p-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-6 h-6 rounded-full border-2 border-white 
+                                ${isCompleted && isOnCooldown ? 'bg-green-500' : ''}"></div>
+                            <div class="text-white">
+                                <div class="text-lg">${task.name}</div>
+                                <div class="text-sm">+${task.reward} DPS</div>
+                            </div>
+                        </div>
+                        <button 
+                            class="task-start-btn" 
+                            data-task-id="${task.id}"
+                            data-reward="${task.reward}"
+                            data-type="daily"
+                            data-storage-key="${task.storageKey}"
+                            ${isCompleted && isOnCooldown ? 'disabled' : ''}
+                        >
+                            <img src="start.png" alt="Начать" 
+                                class="h-8 ${isCompleted && isOnCooldown ? 'opacity-50' : ''}">
+                        </button>
+                    </div>
+                `;
+                container.innerHTML += taskElement;
+            }
         });
 
-        // Добавляем обработчики для кнопок
-        const taskButtons = container.querySelectorAll('.task-start-btn');
+        const taskButtons = container.querySelectorAll('.task-start-btn:not([disabled])');
         taskButtons.forEach(button => {
             button.addEventListener('click', handleTaskClick);
         });
@@ -74,65 +205,118 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleTaskClick(event) {
         const button = event.currentTarget;
         const taskId = button.dataset.taskId;
-        const reward = parseInt(button.dataset.reward);
-        const cooldown = parseInt(button.dataset.cooldown);
-        
-        const lastClaimTime = localStorage.getItem(`${taskId}_lastClaim`);
-        const now = Date.now();
-        
-        if (lastClaimTime) {
-            const timePassed = now - parseInt(lastClaimTime);
-            if (timePassed < cooldown) {
-                const remainingSeconds = Math.ceil((cooldown - timePassed) / 1000);
-                showPopup(`Подождите ${remainingSeconds} секунд`);
-                return;
+        const taskType = button.dataset.type;
+
+        if (taskType === 'daily') {
+            const reward = parseInt(button.dataset.reward);
+            const storageKey = button.dataset.storageKey;
+            
+            // Проверяем кулдаун
+            const lastCompletedTime = parseInt(localStorage.getItem(`${storageKey}_time`) || '0');
+            const currentTime = Date.now();
+            if (currentTime - lastCompletedTime < 10000) return; // 10 секунд кулдаун
+            
+            // Добавляем очки
+            const balanceEvent = new CustomEvent('balanceUpdated', {
+                detail: {
+                    amount: reward,
+                    type: 'tasks'
+                }
+            });
+            window.dispatchEvent(balanceEvent);
+
+            // Сохраняем время выполнения
+            localStorage.setItem(storageKey, 'true');
+            localStorage.setItem(`${storageKey}_time`, currentTime.toString());
+
+            // Показываем уведомление
+            showPopup(`Поздравляем! Вы получили +${reward} DPS`);
+
+            // Обновляем отображение
+            renderTasks('daily');
+
+            // Запускаем таймер для сброса состояния
+            setTimeout(() => {
+                localStorage.setItem(storageKey, 'false');
+                renderTasks('daily');
+            }, 10000);
+        } else if (taskType === 'social') {
+            const reward = parseInt(button.dataset.reward);
+            const link = button.dataset.link;
+            const storageKey = button.dataset.storageKey;
+            
+            if (localStorage.getItem(storageKey) === 'true') return;
+            
+            window.open(link, '_blank');
+
+            // Создаем событие для обновления баланса
+            const balanceEvent = new CustomEvent('balanceUpdated', {
+                detail: {
+                    amount: reward,
+                    type: 'tasks'
+                }
+            });
+            window.dispatchEvent(balanceEvent);
+
+            // Отмечаем задачу как выполненную
+            localStorage.setItem(storageKey, 'true');
+
+            // Показываем уведомление
+            showPopup(`Поздравляем! Вы получили +${reward} DPS`);
+
+            // Обновляем отображение задач
+            renderTasks(button.closest('.task-container').dataset.category || 'media');
+        } else if (taskType === 'progress') {
+            const reward = parseInt(button.dataset.reward);
+            
+            if (taskId === 'playgames') {
+                const progress = parseInt(localStorage.getItem('gamesPlayedProgress') || '0');
+                if (progress >= 5) {
+                    window.addPoints(reward, 'tasks');
+                    localStorage.setItem('gamesPlayedProgress', '0');
+                    showPopup(`Поздравляем! Вы получили +${reward} DPS`);
+                    updateTasksProgress();
+                }
+            } else if (taskId === 'collectplanes') {
+                const progress = parseInt(localStorage.getItem('planesCollectedProgress') || '0');
+                if (progress >= 10) {
+                    window.addPoints(reward, 'tasks');
+                    localStorage.setItem('planesCollectedProgress', '0');
+                    showPopup(`Поздравляем! Вы получили +${reward} DPS`);
+                    updateTasksProgress();
+                }
+            } else if (taskId === 'breakplatforms') {
+                const progress = parseInt(localStorage.getItem('platformsBrokenProgress') || '0');
+                if (progress >= 6) {
+                    window.addPoints(reward, 'tasks');
+                    localStorage.setItem('platformsBrokenProgress', '0');
+                    showPopup(`Поздравляем! Вы получили +${reward} DPS`);
+                    updateTasksProgress();
+                }
+            } else if (taskId === 'usesprings') {
+                const progress = parseInt(localStorage.getItem('springsUsedProgress') || '0');
+                if (progress >= 25) {
+                    window.addPoints(reward, 'tasks');
+                    localStorage.setItem('springsUsedProgress', '0');
+                    showPopup(`Поздравляем! Вы получили +${reward} DPS`);
+                    updateTasksProgress();
+                }
             }
         }
-        
-        // Добавляем очки
-        window.addPoints(reward, 'tasks');
-        
-        // Сохраняем время последнего получения награды
-        localStorage.setItem(`${taskId}_lastClaim`, now.toString());
-        
-        // Показываем поздравление
-        showPopup(`Поздравляем! Вы получили +${reward} DPS`);
-        
-        // Сразу обновляем отображение на Cooldown
-        const rewardText = button.parentElement.querySelector('.text-sm');
-        if (rewardText) {
-            rewardText.textContent = 'Cooldown';
-        }
-        
-        // Обновляем отображение кнопки
-        button.disabled = true;
-        button.querySelector('img').classList.add('opacity-50');
-        
-        // Запускаем таймер для обновления состояния
-        setTimeout(() => {
-            if (rewardText) {
-                rewardText.textContent = `+${reward} DPS`;
-            }
-            button.disabled = false;
-            button.querySelector('img').classList.remove('opacity-50');
-        }, cooldown);
     }
 
     function showPopup(message) {
         console.log('Creating popup with message:', message);
         
-        // Удаляем существующие попапы
         const existingPopups = document.querySelectorAll('.popup-animation');
         existingPopups.forEach(popup => popup.remove());
         
-        // Создаем элемент попапа
         const popup = document.createElement('div');
         popup.className = 'fixed px-6 py-3 rounded shadow-lg z-50 text-center popup-animation';
         popup.innerHTML = `
             <p class="text-lg">${message}</p>
         `;
         
-        // Добавляем стили для анимации
         const style = document.createElement('style');
         style.textContent = `
             .popup-animation {
@@ -167,10 +351,8 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         document.head.appendChild(style);
         
-        // Добавляем попап в начало body
         document.body.insertBefore(popup, document.body.firstChild);
         
-        // Автоматически удаляем попап через 3 секунды
         setTimeout(() => {
             if (popup.parentElement) {
                 popup.remove();
@@ -179,7 +361,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
 
-    // Обработка переключения категорий
     const categoryButtons = document.querySelectorAll('.task-category-btn');
     categoryButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -195,6 +376,36 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Явно вызываем renderTasks при загрузке страницы
+    // Добавляем функцию для обновления прогресса всех тасков
+    function updateTasksProgress() {
+        // Обновляем прогресс в объекте тасков
+        taskCategories.daily.forEach(task => {
+            if (task.id === 'playgames') {
+                task.progress = parseInt(localStorage.getItem('gamesPlayedProgress') || '0');
+            } else if (task.id === 'collectplanes') {
+                task.progress = parseInt(localStorage.getItem('planesCollectedProgress') || '0');
+            } else if (task.id === 'breakplatforms') {
+                task.progress = parseInt(localStorage.getItem('platformsBrokenProgress') || '0');
+            } else if (task.id === 'usesprings') {
+                task.progress = parseInt(localStorage.getItem('springsUsedProgress') || '0');
+            }
+        });
+        
+        // Перерисовываем таски
+        renderTasks('daily');
+    }
+
+    // Добавляем слушатели событий для обновления прогресса
+    window.addEventListener('planeProgressUpdated', updateTasksProgress);
+    window.addEventListener('gameProgressUpdated', updateTasksProgress);
+
+    // Добавляем функцию для сброса всех media задач (для тестирования)
+    window.resetMediaTasks = function() {
+        taskCategories.media.forEach(task => {
+            localStorage.setItem(task.storageKey, 'false');
+        });
+        renderTasks('media');
+    };
+
     renderTasks('daily');
 }); 

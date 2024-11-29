@@ -51,14 +51,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Функция обновления балансов
     function updateBalances() {
-        // Обновляем отображение на странице
-        document.querySelector('.text-lg.font-bold').textContent = `${balances.total} DPS`;
+        // Обновляем общий баланс
+        const totalBalanceElement = document.querySelector('.text-lg.font-bold');
+        if (totalBalanceElement) {
+            totalBalanceElement.textContent = `${balances.total} DPS`;
+        }
         
         // Обновляем балансы в карточках
         const balanceCards = document.querySelectorAll('.text-black.font-bold.text-base');
-        balanceCards[0].textContent = `+${balances.tasks} DPS`;
-        balanceCards[1].textContent = `+${balances.friends} DPS`;
-        balanceCards[2].textContent = `+${balances.game} DPS`;
+        if (balanceCards.length >= 3) {
+            balanceCards[0].textContent = `+${balances.tasks} DPS`;
+            balanceCards[1].textContent = `+${balances.friends} DPS`;
+            balanceCards[2].textContent = `+${balances.game} DPS`;
+        }
 
         // Сохраняем в localStorage
         localStorage.setItem('totalBalance', balances.total);
@@ -87,4 +92,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Устанавливаем домашнюю страницу как активную при загрузке
     switchPage('home');
+
+    // Добавляем слушатель события balanceUpdated
+    window.addEventListener('balanceUpdated', function(e) {
+        const { amount, type } = e.detail;
+        
+        // Обновляем балансы
+        balances[type] += amount;
+        balances.total = balances.tasks + balances.friends + balances.game;
+        
+        // Обновляем отображение
+        updateBalances();
+    });
 });

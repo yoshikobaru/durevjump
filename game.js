@@ -61,7 +61,7 @@ class DoodleGame {
         this.SPRING_HEIGHT = 30;
         this.SPRING_OFFSET = 10; // Отступ от края платформы
         
-        // В конструкторе добавим размеры для самолётика
+        // В конструкторе добавим размры для самолёика
         this.PLANE_WIDTH = 40;
         this.PLANE_HEIGHT = 40;
         this.PLANE_OFFSET = 10; // Отступ от края платформы
@@ -91,7 +91,7 @@ class DoodleGame {
         this.update = this.update.bind(this);
         this.draw = this.draw.bind(this);
         
-        // Добавляем вызов метода установки обраотчиков событий
+        // Добавляем вызов метода установки обраотчиов событий
         this.setupEventListeners();
         
         // Параметры монстра
@@ -249,7 +249,11 @@ class DoodleGame {
             
             // Проверяем, упал ли дудлик за пределы экрана
             if (this.doodler.y > this.height) {
-                this.handleGameOver();
+                // Сохраняем текущий счет перед вызовом handleGameOver
+                const finalScore = this.score;
+                
+                // Вызываем handleGameOver с сохраненным счетом
+                this.handleGameOver(finalScore);
                 return;
             }
             
@@ -263,7 +267,7 @@ class DoodleGame {
             // Останавливаем все движения дудлика при засасывании
             this.doodler.speedY = 0;
             this.doodler.speedX = 0;
-            return; // Прерываем дальнейшее обновление физики
+            return; // Прерыаем дальнейшее обновление физики
         }
         
         // Проверяем состояние полёта
@@ -276,7 +280,7 @@ class DoodleGame {
             }
         }
         
-        // Обновление позиции дудлика
+        // Обовление позиции дудлика
         this.doodler.speedY += this.doodler.gravity;
         this.doodler.y += this.doodler.speedY;
         
@@ -311,19 +315,31 @@ class DoodleGame {
                     platform.x + this.PLANE_OFFSET : 
                     platform.x + this.platformWidth - this.PLANE_WIDTH - this.PLANE_OFFSET;
                     
-                // Проверка столкноения с самолётиком (в любой момент)
+                // Проверка столкновения с самолётиком (в любой момент)
                 const hitPlane = 
                     this.doodler.x + this.doodler.width > planeX &&
                     this.doodler.x < planeX + this.PLANE_WIDTH &&
                     this.doodler.y + this.doodler.height > platform.y - this.PLANE_HEIGHT + 15 &&
                     this.doodler.y < platform.y + this.PLANE_HEIGHT;
                     
-                if (hitPlane) {
+                if (hitPlane && !platform.plane.collected) {
                     platform.plane.collected = true;
                     this.doodler.isFlying = true;
                     this.doodler.flyingStartTime = Date.now();
                     this.doodler.speedY = this.PLANE_SPEED;
-                    return; // Прерываем обработку после подбора самлётика
+
+                    // Увеличиваем счётчик собранных самолётиков с ограничением в 10
+                    const currentCollected = parseInt(localStorage.getItem('planesCollectedProgress') || '0');
+                    // Используем Math.min чтобы значение не превышало 10
+                    const newCollected = Math.min(currentCollected + 1, 10);
+                    localStorage.setItem('planesCollectedProgress', newCollected.toString());
+                    
+                    // Отправляем событие для обновления прогресса в задаче
+                    const event = new Event('planeProgressUpdated');
+                    window.dispatchEvent(event);
+
+                    // Можно добавить всплывающее уведомление о сборе самолётика
+                    console.log(`Собрано самолётиков: ${newCollected}/10`);
                 }
             }
             
@@ -331,6 +347,16 @@ class DoodleGame {
             if ((isLanding || isSteppingOn) && platform.isFake && !platform.breaking) {
                 platform.breaking = true;
                 platform.breakStartTime = Date.now();
+                
+                // Увеличиваем счётчик сломанных платформ
+                const currentBroken = parseInt(localStorage.getItem('platformsBrokenProgress') || '0');
+                const newBroken = Math.min(currentBroken + 1, 6); // Ограничиваем максимальное значение
+                localStorage.setItem('platformsBrokenProgress', newBroken.toString());
+                
+                // Отправляем событие для обновления прогресса в задаче
+                const event = new Event('platformBrokenUpdated');
+                window.dispatchEvent(event);
+                
                 return;
             }
             
@@ -348,8 +374,17 @@ class DoodleGame {
                         platform.spring.active = true;
                         platform.spring.activationTime = Date.now();
                         this.doodler.speedY = this.SPRING_FORCE;
-                    } else {
-                        this.doodler.speedY = this.JUMP_FORCE;
+
+                        // Увеличиваем счётчик использованных пружинок
+                        const currentSprings = parseInt(localStorage.getItem('springsUsedProgress') || '0');
+                        const newSprings = Math.min(currentSprings + 1, 25); // Ограничиваем максимальное значение
+                        localStorage.setItem('springsUsedProgress', newSprings.toString());
+                        
+                        // Отправляем событие для обновления прогресса в задаче
+                        const event = new Event('springProgressUpdated');
+                        window.dispatchEvent(event);
+
+                        console.log(`Использовано пружинок: ${newSprings}/25`);
                     }
                 } else if (!this.doodler.isFlying && !platform.isFake) {
                     this.doodler.speedY = this.JUMP_FORCE;
@@ -479,8 +514,10 @@ class DoodleGame {
         
         // Проверка на выпадение за нижнюю границу
         if (this.doodler.y > this.height) {
+            // Сохраняем текущий счет перед установкой gameOver
+            const finalScore = this.score;
             this.isGameOver = true;
-            document.getElementById('gameOver').classList.remove('hidden');
+            this.handleGameOver(finalScore);
         }
     }
 
@@ -497,7 +534,7 @@ class DoodleGame {
         // Отрисовка черных дыр (добавим перед отрисовкой дудлика для правильного слоя)
         this.platforms.forEach(platform => {
             if (platform.blackHole && this.blackHoleImg && this.blackHoleImg.complete) {
-                // Отрисовка черной дыры над платформой
+                // Отрисовка черной дыры над плтформой
                 this.ctx.drawImage(
                     this.blackHoleImg,
                     platform.blackHole.x,
@@ -599,7 +636,7 @@ class DoodleGame {
                 // Сохраняем контекст
                 this.ctx.save();
                 
-                // Отражаем монстра в зависимости от направления
+                // Оражаем монстра в зависимости от направления
                 if (platform.monster.direction < 0) {
                     this.ctx.scale(-1, 1);
                     this.ctx.drawImage(this.monsterImg,
@@ -680,7 +717,7 @@ class DoodleGame {
     }
     
     setupEventListeners() {
-        // Обработчики клавиатуры
+        // Обработчики клвиатуры
         document.addEventListener('keydown', (e) => {
             if (e.code === 'ArrowLeft' || e.code === 'KeyA') {
                 this.keys.left = true;
@@ -723,7 +760,7 @@ class DoodleGame {
         const hasMonster = !isIcePlatform && !hasSpring && !hasPlane && Math.random() < this.MONSTER_SPAWN_CHANCE;
         const hasBlackHole = !isIcePlatform && !hasSpring && !hasPlane && !hasMonster && Math.random() < this.BLACK_HOLE_CHANCE;
         const newX = Math.random() * (this.width - this.platformWidth);
-        const isFakePlatform = !isIcePlatform && !hasSpring && !hasPlane && !hasMonster && !hasBlackHole && Math.random() < this.FAKE_PLATFORM_CHANCE;
+        const isFakePlatform = !isIcePlatform && !hasSpring && !hasPlane && !hasMonster && Math.random() < this.FAKE_PLATFORM_CHANCE;
         
         return {
             x: newX,
@@ -757,37 +794,32 @@ class DoodleGame {
         };
     }
 
-    handleGameOver() {
-        this.isGameOver = true;
-        
-        // Добавляем очки только за текущую игру
-        window.addPoints(this.score, 'game');
+    handleGameOver(finalScore) {
+        if (!this.isGameOver) return; // Предотвращаем повторный вызов
+
+        // Используем переданный счет вместо this.score
+        document.getElementById('finalScore').textContent = finalScore;
         
         // Обновляем лучший счет
-        if (this.score > this.bestScore) {
-            this.bestScore = this.score;
-            localStorage.setItem('bestScore', this.bestScore);
+        const currentBest = parseInt(localStorage.getItem('bestScore')) || 0;
+        if (finalScore > currentBest) {
+            localStorage.setItem('bestScore', finalScore.toString());
+            document.getElementById('bestScore').textContent = finalScore;
+        } else {
+            document.getElementById('bestScore').textContent = currentBest;
         }
+
+        // Добавляем очки в общий баланс
+        window.addPoints(finalScore, 'game');
         
-        // Обновляем элементы интерфейса
-        document.getElementById('finalScore').textContent = this.score; // Показываем счет текущей игры
-        document.getElementById('bestScore').textContent = this.bestScore;
+        // Обновляем прогресс игр
+        const gamesPlayed = parseInt(localStorage.getItem('gamesPlayedProgress') || '0');
+        localStorage.setItem('gamesPlayedProgress', Math.min(gamesPlayed + 1, 5).toString());
         
-        // Показываем выигрыш за текущую игру
-        const gameOverScoreElement = document.querySelector('#gameOver .text-xl:last-child');
-        if (gameOverScoreElement) {
-            gameOverScoreElement.textContent = `+${this.score} DPS`;
-        }
-        
-        // Обновляем счет на стартовом экране
-        document.getElementById('bestScoreStart').textContent = this.bestScore;
-        
-        // Показываем стартовый экран снова
-        const startScreen = document.getElementById('startScreen');
-        startScreen.style.opacity = '1';
-        startScreen.style.pointerEvents = 'auto';
-        
-        // Показываем экран окончания игры
+        // Создаем и отправляем событие обновления прогресса
+        const event = new Event('gameProgressUpdated');
+        window.dispatchEvent(event);
+
         document.getElementById('gameOver').classList.remove('hidden');
     }
 }
@@ -811,4 +843,15 @@ document.addEventListener('DOMContentLoaded', () => {
             game.start();
         }
     });
+});
+
+// В конце файла добавляем слушатель события
+window.addEventListener('platformBrokenUpdated', () => {
+    const event = new Event('platformProgressUpdated');
+    window.dispatchEvent(event);
+});
+
+window.addEventListener('springProgressUpdated', () => {
+    const event = new Event('platformProgressUpdated');
+    window.dispatchEvent(event);
 });

@@ -167,19 +167,19 @@ class DoodleGame {
         };
 
         Promise.all([
-            loadImage('IMG_0639 1.png').then(img => this.doodlerImg = img),
-            loadImage('IMG_0640 1.png').then(img => this.platformImg = img),
-            loadImage('IMG_0648 2.png').then(img => this.icePlatformImg = img),
+            loadImage('duriv.png').then(img => this.doodlerImg = img),
+            loadImage('greenplatform.png').then(img => this.platformImg = img),
+            loadImage('blueplatform.png').then(img => this.icePlatformImg = img),
             loadImage('pruzhinka_2pruzhinka.png').then(img => this.springImg = img),
             loadImage('pruzhinka_1pruzhinka.png').then(img => this.springActiveImg = img),
             loadImage('samoletik.png').then(img => this.planeImg = img),
             loadImage('DurovSamoletik.png').then(img => this.doodlerPlaneImg = img),
             loadImage('monstr2.png').then(img => this.monsterImg = img),
             loadImage('background.png').then(img => this.backgroundImg = img),
-            loadImage('IMG_0649 normal.png').then(img => this.fakePlatformLeftImg = img),
-            loadImage('IMG_0650 normal.png').then(img => this.fakePlatformRightImg = img),
-            loadImage('IMG_0649 1.png').then(img => this.brokenPlatformLeftImg = img),
-            loadImage('IMG_0650 1.png').then(img => this.brokenPlatformRightImg = img),
+            loadImage('right.png').then(img => this.fakePlatformLeftImg = img),
+            loadImage('left.png').then(img => this.fakePlatformRightImg = img),
+            loadImage('leftfake.png').then(img => this.brokenPlatformLeftImg = img),
+            loadImage('rightfake.png').then(img => this.brokenPlatformRightImg = img),
             loadImage('blackHole.png').then(img => this.blackHoleImg = img)
         ]).then(() => {
             console.log('Все изображения загружены');

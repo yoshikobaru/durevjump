@@ -46,7 +46,7 @@ class DoodleGame {
         // Параметры для самолётика
         this.PLANE_CHANCE = 0.03; // 5% шанс появления самолётика
         this.PLANE_FLIGHT_DURATION = 4000; // 4 секунды полёта
-        this.PLANE_SPEED = -12; // Скорость полёта вверх
+        this.PLANE_SPEED = -20; // Скорость полёта вверх
         
         // Добавим фиксированные размеры для дудлика
         this.DOODLER_WIDTH = 60;
@@ -114,6 +114,8 @@ class DoodleGame {
         
         this.bestScore = parseInt(localStorage.getItem('bestScore')) || 0;
         document.getElementById('bestScoreStart').textContent = this.bestScore;
+        
+        
     }
     
     initializeGame() {

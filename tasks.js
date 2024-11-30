@@ -306,58 +306,118 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showPopup(message) {
-        console.log('Creating popup with message:', message);
-        
-        const existingPopups = document.querySelectorAll('.popup-animation');
-        existingPopups.forEach(popup => popup.remove());
-        
         const popup = document.createElement('div');
-        popup.className = 'fixed px-6 py-3 rounded shadow-lg z-50 text-center popup-animation';
+        popup.className = 'modern-popup';
         popup.innerHTML = `
-            <p class="text-lg">${message}</p>
+            <div class="popup-content">
+                <svg class="popup-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="popup-text">${message}</p>
+            </div>
         `;
         
         const style = document.createElement('style');
         style.textContent = `
-            .popup-animation {
-                animation: popup 3s ease-in-out forwards;
-                z-index: 9999;
-                background-color: #2563eb !important;
-                color: white !important;
+            .modern-popup {
+                position: fixed;
                 top: 32px;
                 left: 50%;
                 transform: translateX(-50%);
-                min-width: 300px;
+                z-index: 9999;
+                min-width: 380px;
+                padding: 20px 32px;
+                background: linear-gradient(135deg, rgba(37, 99, 235, 0.95), rgba(29, 78, 216, 0.95));
+                backdrop-filter: blur(10px);
+                border-radius: 16px;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2),
+                            0 0 20px rgba(37, 99, 235, 0.2);
+                animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             }
-            
-            @keyframes popup {
+
+            .popup-content {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .popup-icon {
+                width: 28px;
+                height: 28px;
+                color: #4ade80;
+                animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+            }
+
+            .popup-text {
+                color: white;
+                font-size: 1.25rem;
+                font-weight: 500;
+                font-family: 'Segoe UI', system-ui, sans-serif;
+                letter-spacing: 0.3px;
+                margin: 0;
+                animation: fadeIn 0.5s ease 0.3s both;
+            }
+
+            @keyframes slideDown {
                 0% {
-                    transform: translate(-50%, -100%);
+                    transform: translate(-50%, -120px) scale(0.9);
                     opacity: 0;
                 }
-                10% {
-                    transform: translate(-50%, 0);
+                100% {
+                    transform: translate(-50%, 0) scale(1);
                     opacity: 1;
                 }
-                90% {
-                    transform: translate(-50%, 0);
+            }
+
+            @keyframes scaleIn {
+                0% {
+                    transform: scale(0);
+                    opacity: 0;
+                }
+                100% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes fadeIn {
+                0% {
+                    transform: translateY(10px);
+                    opacity: 0;
+                }
+                100% {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
+            .modern-popup.hide {
+                animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            }
+
+            @keyframes slideUp {
+                0% {
+                    transform: translate(-50%, 0) scale(1);
                     opacity: 1;
                 }
                 100% {
-                    transform: translate(-50%, 0);
+                    transform: translate(-50%, -120px) scale(0.9);
                     opacity: 0;
                 }
             }
         `;
+
         document.head.appendChild(style);
-        
-        document.body.insertBefore(popup, document.body.firstChild);
-        
+        document.body.appendChild(popup);
+
+        // Удаление попапа через 3 секунды
         setTimeout(() => {
-            if (popup.parentElement) {
+            popup.classList.add('hide');
+            setTimeout(() => {
                 popup.remove();
                 style.remove();
-            }
+            }, 600);
         }, 3000);
     }
 

@@ -55,13 +55,27 @@ document.addEventListener('DOMContentLoaded', function() {
         const totalBalanceElement = document.querySelector('.text-lg.font-bold');
         if (totalBalanceElement) {
             totalBalanceElement.textContent = `${balances.total} DPS`;
+            totalBalanceElement.classList.add('mt-[20px]', 'ml-[20px]');
         }
         
         // Обновляем балансы в карточках
         const balanceCards = document.querySelectorAll('.text-black.font-bold.text-base');
         if (balanceCards.length >= 3) {
+            // Для карточки друзей (balanceCards[1])
+            const friendsCard = balanceCards[1];
+            
+            // Удаляем все возможные классы отступов
+            friendsCard.classList.remove(
+                'mt-[5px]', 'mt-[10px]', 'mt-[15px]', 'mt-[20px]', 'mt-[25px]',
+                'ml-[5px]', 'ml-[10px]', 'ml-[15px]', 'ml-[20px]', 'ml-[25px]'
+            );
+            
+            // Добавляем новые классы отступов с уменьшенным отступом слева
+            friendsCard.textContent = `+${balances.friends} DPS`;
+            friendsCard.classList.add('mt-[10px]', 'ml-[5px]');
+            
+            // Остальные карточки
             balanceCards[0].textContent = `+${balances.tasks} DPS`;
-            balanceCards[1].textContent = `+${balances.friends} DPS`;
             balanceCards[2].textContent = `+${balances.game} DPS`;
         }
 

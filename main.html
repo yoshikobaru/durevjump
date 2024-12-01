@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Dinosaur App</title>
     <link href="/dist/output.css" rel="stylesheet">
@@ -18,7 +18,7 @@
                 <div class="text-[#007AFF] text-lg">Отмена</div>
                 <div class="text-center">
                     <div class="text-lg">DurovJump</div>
-                    <div class="text-gray-400 text-sm">мини-приле</div>
+                    <div class="text-gray-400 text-sm">мини-приложение</div>
                 </div>
                 <div class="text-[#007AFF] text-2xl">⋯</div>
             </div>
@@ -41,7 +41,7 @@
                     <!-- Правая колонка с баллами -->
                     <div class="ml-auto space-y-4 -mt-16">
                         <div class="relative">
-                            <img src="Frame 91.png" alt="Задания +450 DPS" class="w-40">
+                            <img src="Frame.png" alt="Задания +450 DPS" class="w-40">
                             <div class="absolute inset-0 flex flex-col items-center justify-center">
                                 <div class="text-[#4A90E2] text-xs mb-1">ЗАДАНИЯ</div>
                                 <div class="text-black font-bold text-base">+450 DPS</div>
@@ -49,7 +49,7 @@
                         </div>
                         
                         <div class="relative">
-                            <img src="Frame 91.png" alt="Друзья +450 DPS" class="w-40 -ml-8">
+                            <img src="Frame.png" alt="Друзья +450 DPS" class="w-40 -ml-8">
                             <div class="absolute inset-0 flex flex-col items-center justify-center -ml-8">
                                 <div class="text-[#4A90E2] text-xs mb-1">ДРУЗЬЯ</div>
                                 <div class="text-black font-bold text-base">+450 DPS</div>
@@ -57,7 +57,7 @@
                         </div>
                         
                         <div class="relative">
-                            <img src="Frame 91.png" alt="Игра +450 DPS" class="w-40">
+                            <img src="Frame.png" alt="Игра +450 DPS" class="w-40">
                             <div class="absolute inset-0 flex flex-col items-center justify-center">
                                 <div class="text-[#4A90E2] text-xs mb-1">ИГРА</div>
                                 <div class="text-black font-bold text-base">+450 DPS</div>
@@ -114,66 +114,62 @@
                 <!-- Контент -->
                 <div class="relative z-10 w-full h-full flex flex-col">
                     <!-- Верхняя часть с логотипом и кнопкой -->
-                    <div class="mt-12 ml-12 flex flex-col items-start">
-                        <img src="durovjump.png" alt="Logo" class="w-[400px] max-w-[400px] mb-8" style="width: 270px;">
-                        <img src="game.png" alt="Start Button" class="w-64 cursor-pointer" id="startBtn">
+                    <div class="mt-8 ml-8 flex flex-col items-start">
+                        <img src="durovjump.png" alt="Logo" class="w-[60%] max-w-[270px] mb-6">
+                        <img src="game.png" alt="Start Button" class="w-[45%] max-w-[200px] cursor-pointer" id="startBtn">
                     </div>
                     
                     <!-- Лучший счёт -->
-                    <div class="absolute bottom-32 right-12 text-center -translate-y-[240px] -ml-12">
-                        <div class="text-2xl font-bold text-black">УЧШИЙ СЧЁТ</div>
-                        <div id="bestScoreStart" class="text-3xl font-bold text-black">1999</div>
-                        <div class="text-sm text-black mt-1"></div>
+                    <div class="absolute bottom-1/4 right-8 text-center">
+                        <div class="text-xl font-bold text-black">ЛУЧШИЙ СЧЁТ</div>
+                        <div id="bestScoreStart" class="text-2xl font-bold text-black">1999</div>
                     </div>
                     
                     <!-- Дуров с платформой внизу -->
-                    <div class="absolute bottom-0 left-12 translate-y-[-70px]">
+                    <div class="absolute bottom-0 left-8">
                         <div class="relative">
-                            <img src="duriv.png" alt="Durov" class="w-32 mb-[-20px] z-10 relative -translate-y-[30px]">
-                            <img src="greenplatform.png" alt="Platform" class="w-48 relative z-0 -translate-y-12">
+                            <img src="duriv.png" alt="Durov" class="w-24 mb-[-15px] z-10 relative">
+                            <img src="greenplatform.png" alt="Platform" class="w-36 relative z-0 -translate-y-8">
                         </div>
                     </div>
                 </div>
             </div>
             <canvas id="gameCanvas" class="w-full h-full"></canvas>
             <div id="score" class="absolute top-4 right-4 text-xl font-bold">0</div>
-            <div id="gameOver" class="hidden absolute inset-0 bottom-20 w-full bg-white flex flex-col items-center justify-start z-10">
+            <div id="gameOver" class="hidden absolute inset-0 w-full bg-white flex flex-col items-center justify-start z-10">
                 <div class="text-center w-full h-full flex flex-col items-center" 
                      style="background-image: url('background.png'); background-size: 20px 20px;">
                     
                     <!-- Увеличиваем отступ для Game -->
-                    <div class="flex flex-col items-start pl-12">
-                        <div class="flex flex-col items-start">
-                            <img src="gamee.png" alt="Game" class="w-[700px] translate-y-[-50px] -ml-12">
-                            <img src="over.png" alt="Over" class="w-64 ml-16 -mt-4 translate-y-[-180px]">
-                        </div>
-                        <!-- остальные элементы остаются на своих местах -->
+                    <div class="flex flex-col items-start pl-8 mt-8">
+                        <img src="gamee.png" alt="Game" class="w-[80%] max-w-[500px] -translate-y-[30px] -ml-8">
+                        <img src="over.png" alt="Over" class="w-[45%] max-w-[200px] ml-12 -mt-2 -translate-y-[120px]">
                     </div>
                     
                     <!-- Подним статистику выше -->
-                    <div class="w-full px-12 -mt-4 text-left transform translate-y-[-100px]">
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-xl">ВАШ СЧЕТ:</span>
-                            <span id="finalScore" class="text-xl">0</span>
+                    <div class="w-full px-8 -mt-2 text-left transform -translate-y-[60px]">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-lg">ВАШ СЧЕТ:</span>
+                            <span id="finalScore" class="text-lg">0</span>
                         </div>
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-xl">ЛУЧШИЙ СЧЕТ:</span>
-                            <span id="bestScore" class="text-xl">0</span>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-lg">ЛУЧШИЙ СЧЕТ:</span>
+                            <span id="bestScore" class="text-lg">0</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-xl">ВЫИГРЫША:</span>
-                            <span class="text-xl">+20 DPS</span>
+                            <span class="text-lg">ВЫИГРЫШ:</span>
+                            <span class="text-lg">+20 DPS</span>
                         </div>
                     </div>
                     
                     <!-- Остальные элементы -->
-                    <div class="flex flex-col items-center mt-auto">
-                        <div class="flex items-center justify-center gap-4 mb-2">
+                    <div class="flex flex-col items-center mt-auto mb-8">
+                        <div class="flex items-center justify-center gap-4">
                             <div class="relative flex flex-col items-center">
-                                <img src="duriv.png" alt="Durov" class="w-43 h-48 relative z-10" style="transform: translateY(-7px);">
-                                <img src="greenplatform.png" alt="Platform" class="w-48 relative z-0 -translate-y-12">
+                                <img src="duriv.png" alt="Durov" class="w-32 h-36 relative z-10">
+                                <img src="greenplatform.png" alt="Platform" class="w-36 relative z-0 -translate-y-8">
                             </div>
-                            <img src="btn.png" alt="Play Again" class="w-48 cursor-pointer -mt-64" id="restartBtn">
+                            <img src="btn.png" alt="Play Again" class="w-36 cursor-pointer -mt-48" id="restartBtn">
                         </div>
                     </div>
                 </div>

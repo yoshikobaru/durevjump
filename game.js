@@ -330,7 +330,7 @@ class DoodleGame {
                     this.doodler.flyingStartTime = Date.now();
                     this.doodler.speedY = this.PLANE_SPEED;
 
-                    // Увеличиваем счётчик собранных самолётиков с ограничением в 10
+                    // Увеличиваем счётчик собранн��х самолётиков с ограничением в 10
                     const currentCollected = parseInt(localStorage.getItem('planesCollectedProgress') || '0');
                     // Используем Math.min чтобы значение не превышало 10
                     const newCollected = Math.min(currentCollected + 1, 10);
@@ -458,7 +458,7 @@ class DoodleGame {
             }
         });
         
-        // Обновление монстров
+        // Обновление мо��стров
         this.platforms.forEach(platform => {
             if (platform.monster) {
                 // Движение монстра
@@ -752,6 +752,30 @@ class DoodleGame {
                 this.doodler.x = this.width - this.doodler.width;
             }
         });
+
+        // Добавляем обработчики для тачскрина
+        let touchStartX = 0;
+        
+        this.canvas.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+
+        this.canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault(); // Предотвращаем скролл страницы
+            if (!this.gameStarted || this.isGameOver) return;
+            
+            const touchX = e.touches[0].clientX;
+            const deltaX = touchX - touchStartX;
+            touchStartX = touchX;
+            
+            this.doodler.x += deltaX;
+            
+            // Ограничение движения
+            if (this.doodler.x < 0) this.doodler.x = 0;
+            if (this.doodler.x > this.width - this.doodler.width) {
+                this.doodler.x = this.width - this.doodler.width;
+            }
+        }, { passive: false });
     }
     
     createPlatform(y) {

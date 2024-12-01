@@ -118,6 +118,11 @@ class DoodleGame {
         
         this.locationManager = null;
         this.initMotionControl();
+        
+        // Инициализируем после загрузки Telegram WebApp
+        if (window.Telegram && window.Telegram.WebApp) {
+            this.initTelegramMotion();
+        }
     }
     
     initializeGame() {
@@ -549,7 +554,7 @@ class DoodleGame {
             }
         });
         
-        // Отрисовка платформ и пружинок
+        // Отрисовк�� платформ и пружинок
         this.platforms.forEach(platform => {
             try {
                 // Не рисуем обычную платформу, если на ней есть черная дыра
@@ -772,7 +777,7 @@ class DoodleGame {
             
             this.doodler.x += deltaX;
             
-            // Ограничение движения
+            // Ог��аничение движения
             if (this.doodler.x < 0) this.doodler.x = 0;
             if (this.doodler.x > this.width - this.doodler.width) {
                 this.doodler.x = this.width - this.doodler.width;
@@ -890,6 +895,96 @@ class DoodleGame {
             }
         }
     }
+
+    initTelegramMotion() {
+        const tg = window.Telegram?.WebApp;
+        
+        if (!tg) {
+            console.error('Telegram WebApp не доступен');
+            return;
+        }
+
+        // Проверяем версию
+        const version = parseFloat(tg.version);
+        if (version < 6.9) {
+            console.error(`Motion Tracker требует Telegram версии 6.9 или выше. Ваша версия: ${tg.version}`);
+            // Можно показать пользователю сообщение о необходимости обновления
+            this.showUpdateMessage();
+            return;
+        }
+
+        // Проверяем поддержку LocationManager
+        if (!tg.LocationManager) {
+            console.error('LocationManager не поддерживается в данной версии');
+            return;
+        }
+
+        tg.ready();
+        
+        // Инициализируем Motion Tracker
+        tg.LocationManager.init((success) => {
+            console.log('Motion Tracker инициализирован:', success);
+            if (success) {
+                this.startMotionTracking(tg.LocationManager);
+            }
+        });
+    }
+
+    showUpdateMessage() {
+        // Показываем сообщение пользователю
+        const message = document.createElement('div');
+        message.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            text-align: center;
+        `;
+        message.innerHTML = `
+            <h3>Требуется обновление</h3>
+            <p>Для использования Motion Tracker обновите Telegram до последней версии.</p>
+        `;
+        document.body.appendChild(message);
+    }
+
+    startMotionTracking(locationManager) {
+        // Запрашиваем текущее положение
+        locationManager.getLocation((location) => {
+            console.log('Начальное положение:', location);
+        });
+
+        // Подписываемся на обновления движения
+        locationManager.locationManagerUpdated.subscribe((data) => {
+            // data содержит x и y координаты наклона
+            if (this.player) {
+                // Движение по x (влево/вправо)
+                const moveSpeed = 5;
+                if (data.x > 0.1) { // наклон вправо
+                    this.player.velocity.x = moveSpeed;
+                } else if (data.x < -0.1) { // наклон влево
+                    this.player.velocity.x = -moveSpeed;
+                } else {
+                    this.player.velocity.x = 0;
+                }
+
+                // Прыжок при наклоне вперед
+                if (data.y < -0.3 && this.player.canJump) {
+                    this.player.jump();
+                }
+            }
+            console.log('Данные движения:', data);
+        });
+
+        // Подписываемся на запросы доступа
+        locationManager.locationRequested.subscribe(() => {
+            console.log('Запрошен доступ к Motion Tracker');
+        });
+    }
 }
 
 // Инициализация игры
@@ -998,3 +1093,11 @@ class GameController {
         // Логика движения вниз
     }
 }
+
+// Запускаем игру только после полной загрузки Telegram WebApp
+window.Telegram.WebApp.onEvent('viewportChanged', () => {
+    if (window.Telegram.WebApp.isInited) {
+        const game = new DoodleGame();
+        // ... остальной код инициализации игры
+    }
+});

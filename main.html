@@ -235,5 +235,16 @@
     <script src="game.js"></script>
     <script src="tasks.js"></script>
     <script src="friends.js"></script>
+    <script>
+        // Проверяем доступность Telegram WebApp
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.Telegram && window.Telegram.WebApp) {
+                console.log('Telegram WebApp доступен');
+                window.Telegram.WebApp.ready();
+            } else {
+                console.error('Telegram WebApp не найден');
+            }
+        });
+    </script>
 </body>
 </html>

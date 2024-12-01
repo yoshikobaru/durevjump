@@ -237,20 +237,19 @@
     <script src="tasks.js"></script>
     <script src="friends.js"></script>
     <script>
-        // Проверяем доступность Telegram WebApp
         document.addEventListener('DOMContentLoaded', () => {
             if (window.Telegram && window.Telegram.WebApp) {
                 console.log('Telegram WebApp доступен');
                 window.Telegram.WebApp.ready();
                 
-                // Запрашиваем разрешение на использование motion
-                if (window.Telegram.WebApp.LocationManager) {
-                    window.Telegram.WebApp.LocationManager.requestAccess()
-                        .then((granted) => {
-                            console.log('Доступ к motion:', granted ? 'разрешен' : 'запрещен');
+                // Запрашиваем разрешение на использование датчиков движения
+                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    DeviceOrientationEvent.requestPermission()
+                        .then(permissionState => {
+                            console.log('Доступ к датчикам движения:', permissionState);
                         })
-                        .catch((error) => {
-                            console.error('Ошибка запроса доступа к motion:', error);
+                        .catch(error => {
+                            console.error('Ошибка запроса доступа к датчикам:', error);
                         });
                 }
             } else {

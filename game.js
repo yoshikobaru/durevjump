@@ -126,7 +126,7 @@ class DoodleGame {
         
         // Добавляем инициализацию motion tracker
         this.motionTrackerEnabled = false;
-        this.initTelegramMotion();
+        this.initMotionTracking();
     }
     
     initializeGame() {
@@ -951,6 +951,44 @@ class DoodleGame {
         locationManager.getLocation((location) => {
             console.log('Начальное положение:', location);
         });
+    }
+
+    initMotionTracking() {
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', (event) => {
+                if (!this.gameStarted || this.isGameOver) return;
+                
+                const gamma = event.gamma; // Наклон влево-вправо (-90 до 90)
+                const sensitivity = 0.5; // Уменьшаем чувствительность
+                
+                // Преобразуем наклон в движение
+                if (gamma > 5) { // наклон вправо
+                    this.doodler.x += Math.abs(gamma) * sensitivity;
+                } else if (gamma < -5) { // наклон влево
+                    this.doodler.x -= Math.abs(gamma) * sensitivity;
+                }
+                
+                // Ограничиваем движение по краям экрана
+                if (this.doodler.x < 0) this.doodler.x = 0;
+                if (this.doodler.x > this.width - this.doodler.width) {
+                    this.doodler.x = this.width - this.doodler.width;
+                }
+            });
+
+            // Запрашиваем разрешение на использование датчиков (для iOS)
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            this.motionTrackerEnabled = true;
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                // Для Android и старых устройств
+                this.motionTrackerEnabled = true;
+            }
+        }
     }
 }
 

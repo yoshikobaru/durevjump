@@ -119,34 +119,35 @@ class DoodleGame {
         // Инициализируем переменные для управления движением
         this.gyroEnabled = false;
         this.gyroSensitivity = 15;
-        this.locationManager = null;
         
         // Инициализируем Telegram WebApp
         this.tg = window.Telegram.WebApp;
         
-        // Настраиваем управление движением
-        this.setupMotionControls();
+        // Проверяем поддержку и включаем управление движением
+        if (this.tg && this.tg.isVersionAtLeast('6.1')) {
+            this.initMotionControls();
+        }
     }
     
-    setupMotionControls() {
-        // Инициализируем LocationManager
-        this.locationManager = this.tg.LocationManager.init();
-        
-        // Подписываемся на события
-        this.tg.onEvent('locationRequested', () => {
-            console.log('Запрошен доступ к датчикам движения');
-        });
-        
-        this.tg.onEvent('locationManagerUpdated', (location) => {
-            if (!this.gameStarted || this.isGameOver) return;
+    initMotionControls() {
+        try {
+            // Включаем отслеживание движения
+            this.tg.enableClosingConfirmation();
+            this.tg.expand();
             
-            // Получаем данные о движении
-            if (location && location.motion) {
-                const x = location.motion.x || 0;
+            // Запрашиваем доступ к датчикам движения
+            this.tg.DeviceMotion.track(true);
+            
+            // Подписываемся на события движения
+            window.addEventListener('devicemotion', (event) => {
+                if (!this.gameStarted || this.isGameOver) return;
                 
-                // Применяем движение на основе наклона
-                if (Math.abs(x) > 0.1) {
-                    const moveX = -x * this.gyroSensitivity;
+                // Получаем ускорение по оси X
+                const acceleration = event.accelerationIncludingGravity.x;
+                
+                if (acceleration) {
+                    // Применяем движение на основе ускорения
+                    const moveX = -acceleration * this.gyroSensitivity;
                     this.doodler.x += moveX;
                     
                     // Ограничиваем движение по краям экрана
@@ -155,19 +156,13 @@ class DoodleGame {
                         this.doodler.x = this.width - this.doodler.width;
                     }
                 }
-            }
-        });
-        
-        // Проверяем инициализацию и запрашиваем доступ
-        if (this.tg.isInited) {
-            this.locationManager.getLocation((error, location) => {
-                if (error) {
-                    console.error('Ошибка при получении данных движения:', error);
-                    return;
-                }
-                this.gyroEnabled = true;
-                console.log('Управление движением активировано');
             });
+
+            this.gyroEnabled = true;
+            console.log('Управление движением активировано');
+        } catch (error) {
+            console.error('Ошибка при инициализации управления движением:', error);
+            this.gyroEnabled = false;
         }
     }
     
@@ -610,7 +605,7 @@ class DoodleGame {
                         const halfWidth = this.platformWidth / 2;
                         
                         if (!platform.breaking) {
-                            // Целая фейковая платформа
+                            // Целая фейков��я платформа
                             if (this.fakePlatformLeftImg && this.fakePlatformRightImg) {
                                 this.ctx.drawImage(this.fakePlatformLeftImg, 
                                     platform.x, platform.y, 
@@ -814,7 +809,10 @@ class DoodleGame {
         });
 
         this.canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault(); // Предотвращаем скролл страницы
+            // Если гироскоп активен и работает, игнорируем тачскрин
+            if (this.gyroEnabled) return;
+            
+            e.preventDefault();
             if (!this.gameStarted || this.isGameOver) return;
             
             const touchX = e.touches[0].clientX;
@@ -823,7 +821,6 @@ class DoodleGame {
             
             this.doodler.x += deltaX;
             
-            // Ограничение движения
             if (this.doodler.x < 0) this.doodler.x = 0;
             if (this.doodler.x > this.width - this.doodler.width) {
                 this.doodler.x = this.width - this.doodler.width;

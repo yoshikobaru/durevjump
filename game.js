@@ -116,11 +116,12 @@ class DoodleGame {
         this.bestScore = parseInt(localStorage.getItem('bestScore')) || 0;
         document.getElementById('bestScoreStart').textContent = this.bestScore;
         
-        
+        this.locationManager = null;
+        this.initMotionControl();
     }
     
     initializeGame() {
-        // Создаем платформы
+        // Создем платформы
         this.platforms = [];
         const startY = this.height * 0.7;
         this.platforms.push(this.createPlatform(startY));
@@ -849,6 +850,46 @@ class DoodleGame {
 
         document.getElementById('gameOver').classList.remove('hidden');
     }
+
+    initMotionControl() {
+        // Ждем инициализации Telegram WebApp
+        Telegram.WebApp.ready();
+        this.locationManager = Telegram.WebApp.LocationManager;
+        
+        this.locationManager.init((success) => {
+            if (success && this.locationManager.isInited) {
+                this.startMotionTracking();
+            }
+        });
+    }
+
+    startMotionTracking() {
+        this.locationManager.getLocation((location) => {
+            if (location) {
+                // Начальное получение данных
+                this.handleMotion(location);
+            }
+        });
+
+        // Подписка на обновления движения
+        this.locationManager.locationManagerUpdated.subscribe((event) => {
+            this.handleMotion(event);
+        });
+    }
+
+    handleMotion(location) {
+        // Используем данные о наклоне для управления
+        if (location && this.player) {
+            // Наклон влево/вправо (x от -1 до 1)
+            const sensitivity = 5; // Настройте чувствительность по необходимости
+            this.player.velocity.x = location.x * sensitivity;
+            
+            // Можно добавить прыжок при резком движении вверх
+            if (location.y < -0.5 && this.player.canJump) {
+                this.player.jump();
+            }
+        }
+    }
 }
 
 // Инициализация игры
@@ -882,3 +923,78 @@ window.addEventListener('springProgressUpdated', () => {
     const event = new Event('platformProgressUpdated');
     window.dispatchEvent(event);
 });
+
+class GameController {
+    constructor() {
+        this.locationManager = null;
+        this.isTracking = false;
+    }
+
+    initMotionControl() {
+        // Инициализация Location Manager
+        Telegram.WebApp.ready();
+        this.locationManager = Telegram.WebApp.LocationManager;
+        
+        this.locationManager.init((success) => {
+            if (success) {
+                if (this.locationManager.isInited) {
+                    this.startTracking();
+                }
+            } else {
+                console.log('Ошибка инициализации Location Manager');
+            }
+        });
+    }
+
+    startTracking() {
+        this.isTracking = true;
+        
+        this.locationManager.getLocation((location) => {
+            if (location) {
+                this.handleMotion(location);
+            }
+        });
+
+        // Подписываемся на события
+        this.locationManager.locationRequested.subscribe((event) => {
+            console.log('Запрошен доступ к отслеживанию движения');
+        });
+
+        this.locationManager.locationManagerUpdated.subscribe((event) => {
+            this.handleMotion(event);
+        });
+    }
+
+    handleMotion(location) {
+        // Здесь ваша логика управления игрой
+        // Пример:
+        if (location.x > 0) {
+            this.moveRight();
+        } else if (location.x < 0) {
+            this.moveLeft();
+        }
+        
+        if (location.y > 0) {
+            this.moveUp();
+        } else if (location.y < 0) {
+            this.moveDown();
+        }
+    }
+
+    // Методы управления игрой
+    moveRight() {
+        // Логика движения вправо
+    }
+
+    moveLeft() {
+        // Логика движения влево
+    }
+
+    moveUp() {
+        // Логика движения вверх
+    }
+
+    moveDown() {
+        // Логика движения вниз
+    }
+}

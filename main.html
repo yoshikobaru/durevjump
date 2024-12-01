@@ -89,9 +89,9 @@
         </div>
     </div>
     
-    <div id="game-page" class="page hidden w-full h-screen z-0 transition-all duration-300">
+    <div id="game-page" class="page hidden w-full h-[calc(100vh-76px)] z-0 transition-all duration-300">
         <div class="relative w-full h-full">
-            <div id="startScreen" class="absolute inset-0 flex flex-col items-center z-10">
+            <div id="startScreen" class="absolute inset-0 flex flex-col items-center z-10 h-[calc(100vh-76px)]">
                 <!-- Фоновое изображение -->
                 <div class="absolute inset-0 w-full h-full">
                     <img src="bgMain.png" alt="Background" class="w-full h-full object-cover">
@@ -134,9 +134,9 @@
                     </div>
                 </div>
             </div>
-            <canvas id="gameCanvas" class="w-full h-full"></canvas>
+            <canvas id="gameCanvas" class="w-full h-[calc(100vh-76px)]"></canvas>
             <div id="score" class="absolute top-4 right-4 text-xl font-bold">0</div>
-            <div id="gameOver" class="hidden absolute inset-0 w-full bg-white flex flex-col items-center justify-start z-10">
+            <div id="gameOver" class="hidden absolute inset-0 w-full bg-white flex flex-col items-center justify-start z-10 h-[calc(100vh-76px)]">
                 <div class="text-center w-full h-full flex flex-col items-center" 
                      style="background-image: url('background.png'); background-size: 20px 20px;">
                     

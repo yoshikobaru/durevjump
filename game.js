@@ -3,11 +3,12 @@ class DoodleGame {
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
         
-        // Устанавливаем базовые размеры для мобильного устройства
+        // Вычисляем доступную высоту (вычитаем высоту футера)
+        const footerHeight = 76; // Высота футера с паддингами
         this.width = window.innerWidth;
-        this.height = window.innerHeight - 80; // Вычитаем высоту нижнего меню
+        this.height = window.innerHeight - footerHeight; // Вычитаем высоту футера
         
-        // Устанавливаем размеры canvas
+        // Устанавливаем размеры canvas с учетом футера
         this.canvas.width = this.width;
         this.canvas.height = this.height;
         
@@ -330,7 +331,7 @@ class DoodleGame {
                     this.doodler.flyingStartTime = Date.now();
                     this.doodler.speedY = this.PLANE_SPEED;
 
-                    // Увеличиваем счётчик собранн��х самолётиков с ограничением в 10
+                    // Увеличиваем счётчик собраннх самолётиков с ограничением в 10
                     const currentCollected = parseInt(localStorage.getItem('planesCollectedProgress') || '0');
                     // Используем Math.min чтобы значение не превышало 10
                     const newCollected = Math.min(currentCollected + 1, 10);
@@ -458,7 +459,7 @@ class DoodleGame {
             }
         });
         
-        // Обновление мо��стров
+        // Обновление мостров
         this.platforms.forEach(platform => {
             if (platform.monster) {
                 // Движение монстра

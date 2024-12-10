@@ -45,7 +45,7 @@ class DoodleGame {
         this.PLATFORM_RANGE = 100; // Дистанция движения в каждую сторону
         
         // Параметры для самолётика
-        this.PLANE_CHANCE = 0.03; // 5% шанс появления самолётика
+        this.PLANE_CHANCE = 0.01; // 5% шанс появления самолётика
         this.PLANE_FLIGHT_DURATION = 4000; // 4 секунды полёта
         this.PLANE_SPEED = -20; // Скорость полёта вверх
         
@@ -68,7 +68,7 @@ class DoodleGame {
         this.PLANE_OFFSET = 10; // Отступ от края платформы
         
         // В конструкторе добавим размеры черной дыры
-        this.BLACK_HOLE_CHANCE = 0.01; // 5% шанс появления черной дыры
+        this.BLACK_HOLE_CHANCE = 0.001; // 5% шанс появления черной дыры
         this.BLACK_HOLE_WIDTH = 50;
         this.BLACK_HOLE_HEIGHT = 50;
         
@@ -100,14 +100,14 @@ class DoodleGame {
         this.MONSTER_HEIGHT = 50;
         this.MONSTER_SPEED = 2;
         this.MONSTER_RANGE = 100; // Дистанция движения
-        this.MONSTER_SPAWN_CHANCE = 0.05; // 5% шанс появления монстра
+        this.MONSTER_SPAWN_CHANCE = 0.01; // 5% шанс появления монстра
         
         // Уменьшенные шансы появления специальных элементов
         this.ICE_PLATFORM_CHANCE = 0.1;     // Оставляем как есть
         this.SPRING_CHANCE = 0.1;           // Уменьшаем с 0.2 до 0.1
-        this.PLANE_CHANCE = 0.05;           // Уменьшаем с 0.08 до 0.05
+        this.PLANE_CHANCE = 0.01;           // Уменьшаем с 0.08 до 0.05
         this.FAKE_PLATFORM_CHANCE = 0.1;    // Оставляем как есть
-        this.MONSTER_SPAWN_CHANCE = 0.05;   // Уменьшаем с 0.08 до 0.05
+        this.MONSTER_SPAWN_CHANCE = 0.01;   // Уменьшаем с 0.08 до 0.05
         this.blackHoleTimeout = null; // Добавляем переменную для храненя таймера
         
         // Сразу инициализируем игру при создании
@@ -239,7 +239,7 @@ class DoodleGame {
     
     start() {
         if (this.imagesLoaded < this.totalImages) {
-            console.log(`Загружено ${this.imagesLoaded} из ${this.totalImages} изображений`);
+            console.log(`Загружено ${this.imagesLoaded} ��з ${this.totalImages} изображений`);
             return;
         }
         
@@ -314,7 +314,7 @@ class DoodleGame {
         
         // Проверяем состояние полёта и засасывания
         if (this.isBeingAbsorbed) {
-            // Останавливаем все движения дудлика при засасывании
+            // Останавливаем все движения дудлика при з��сасывании
             this.doodler.speedY = 0;
             this.doodler.speedX = 0;
             return; // Прерыаем дальнейшее обновление физики
@@ -605,7 +605,7 @@ class DoodleGame {
                         const halfWidth = this.platformWidth / 2;
                         
                         if (!platform.breaking) {
-                            // Целая фейков��я платформа
+                            // Целая фейковая платформа
                             if (this.fakePlatformLeftImg && this.fakePlatformRightImg) {
                                 this.ctx.drawImage(this.fakePlatformLeftImg, 
                                     platform.x, platform.y, 

@@ -127,6 +127,9 @@ class DoodleGame {
         if (this.tg && this.tg.isVersionAtLeast('6.1')) {
             this.initMotionControls();
         }
+        
+        // Добавляем новый метод для инициализации кнопки старта
+        this.initStartButton();
     }
     
     initMotionControls() {
@@ -176,7 +179,7 @@ class DoodleGame {
             this.platforms.push(this.createPlatform(startY - i * (this.height / (this.MIN_PLATFORMS - 2))));
         }
         
-        // Инициализируем дудлика
+        // Инициал��зируем дудлика
         const startPlatform = this.platforms[0];
         this.doodler = {
             x: startPlatform.x + (this.platformWidth / 2) - (this.DOODLER_WIDTH / 2),
@@ -239,7 +242,7 @@ class DoodleGame {
     
     start() {
         if (this.imagesLoaded < this.totalImages) {
-            console.log(`Загружено ${this.imagesLoaded} ��з ${this.totalImages} изображений`);
+            console.log(`Загружено ${this.imagesLoaded} из ${this.totalImages} изображений`);
             return;
         }
         
@@ -314,7 +317,7 @@ class DoodleGame {
         
         // Проверяем состояние полёта и засасывания
         if (this.isBeingAbsorbed) {
-            // Останавливаем все движения дудлика при з��сасывании
+            // Останавливаем все движения дудлика при засасывании
             this.doodler.speedY = 0;
             this.doodler.speedX = 0;
             return; // Прерыаем дальнейшее обновление физики
@@ -400,7 +403,7 @@ class DoodleGame {
                 
                 // Увеличиваем счётчик сломанных платформ
                 const currentBroken = parseInt(localStorage.getItem('platformsBrokenProgress') || '0');
-                const newBroken = Math.min(currentBroken + 1, 6); // Ограничиваем максимальное значение
+                const newBroken = Math.min(currentBroken + 1, 6); // граничиваем максимальное значение
                 localStorage.setItem('platformsBrokenProgress', newBroken.toString());
                 
                 // Отправляем событие для обновления прогресса в задаче
@@ -509,7 +512,7 @@ class DoodleGame {
         // Обновление мостров
         this.platforms.forEach(platform => {
             if (platform.monster) {
-                // Движение монстра
+                // Движени�� монстра
                 platform.monster.x += this.MONSTER_SPEED * platform.monster.direction;
                 
                 // Смена направления
@@ -634,7 +637,7 @@ class DoodleGame {
                             }
                         }
                     } else {
-                        // Рисуем обычную платформу
+                        // Рисуем обычную плат��орму
                         const platformImage = platform.type === 'ice' ? this.icePlatformImg : this.platformImg;
                         if (platformImage.complete) {
                             this.ctx.drawImage(platformImage, platform.x, platform.y, 
@@ -794,7 +797,7 @@ class DoodleGame {
             const mouseX = e.clientX - rect.left;
             this.doodler.x = mouseX - this.doodler.width / 2;
             
-            // Ограничение движения по краям
+            // Ограничени�� движения по краям
             if (this.doodler.x < 0) this.doodler.x = 0;
             if (this.doodler.x > this.width - this.doodler.width) {
                 this.doodler.x = this.width - this.doodler.width;
@@ -897,6 +900,33 @@ class DoodleGame {
         window.dispatchEvent(event);
 
         document.getElementById('gameOver').classList.remove('hidden');
+    }
+
+    initStartButton() {
+        const startBtn = document.getElementById('startBtn');
+        const startBtnContainer = document.getElementById('startBtnContainer');
+
+        // Добавляем обработчик на контейнер кнопки
+        if (startBtnContainer) {
+            startBtnContainer.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Клик по контейнеру кнопки старта');
+                if (this.imagesLoaded === this.totalImages) {
+                    this.start();
+                }
+            });
+        }
+
+        // Сохраняем существующий обработчик на самой кнопке
+        if (startBtn) {
+            startBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Клик по кнопке старта');
+                if (this.imagesLoaded === this.totalImages) {
+                    this.start();
+                }
+            });
+        }
     }
 }
 

@@ -122,7 +122,20 @@
                     <!-- Верхняя часть с логотипом и кнопкой -->
                     <div class="mt-8 ml-8 flex flex-col items-start">
                         <img src="durovjump.png" alt="Logo" class="w-[60%] max-w-[270px] mb-6">
-                        <img src="game.png" alt="Start Button" class="w-[45%] max-w-[200px] cursor-pointer" id="startBtn">
+                        <!-- Контейнер для кнопки -->
+                        <div id="startBtnContainer" 
+                             class="relative w-[45%] max-w-[200px] min-w-[120px] cursor-pointer z-50">
+                            <!-- Невидимая кнопка поверх изображения -->
+                            <button id="startBtnHitbox"
+                                    class="absolute inset-[-20px] w-[calc(100%+40px)] h-[calc(100%+40px)] 
+                                           bg-transparent z-50 cursor-pointer touch-manipulation">
+                            </button>
+                            <!-- Изображение кнопки -->
+                            <img src="game.png" 
+                                 alt="Start Button" 
+                                 id="startBtn" 
+                                 class="w-full h-auto relative z-50">
+                        </div>
                     </div>
                     
                     <!-- Лучший счёт -->
@@ -192,7 +205,7 @@
                 <!-- Верхний заголовок -->
                 <img src="invitefriends.png" alt="Приглашай друзей" class="mb-6" style="height: 200px;">
                 
-                <!-- Секция с текстом и кнопой -->
+                <!-- С��кция с текстом и кнопой -->
                 <div class="flex justify-between items-center mb-8">
                     <img src="gametogether.png" alt="Играйте вместе" style="height: 48px;">
                     <img src="invite.png" alt="Пригласить" class="cursor-pointer" style="height: 64px;">

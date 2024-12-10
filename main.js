@@ -117,10 +117,4 @@ document.addEventListener('DOMContentLoaded', function() {
         // Обновляем отображение
         updateBalances();
     });
-
-    document.getElementById('startBtn').addEventListener('click', () => {
-        if (game.imagesLoaded === game.totalImages) {
-            game.start();
-        }
-    });
 });

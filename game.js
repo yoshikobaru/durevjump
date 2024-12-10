@@ -137,8 +137,8 @@ class DoodleGame {
             // Инициализируем Telegram WebApp
             this.tg = window.Telegram.WebApp;
             
-            // Устанавливаем чувствительность гироскопа
-            this.gyroSensitivity = 5;
+            // Увеличиваем чувствительность гироскопа
+            this.gyroSensitivity = 15; // Увеличили с 5 до 15
             
             if (window.DeviceOrientationEvent) {
                 // Для iOS 13+ нужно запросить разрешение
@@ -193,11 +193,11 @@ class DoodleGame {
             const tilt = event.gamma; // Наклон влево-вправо (-90 до 90)
             
             if (tilt !== null) {
-                // Преобразуем наклон в движение (уменьшаем чувствительность)
-                const moveX = (tilt / 90) * this.gyroSensitivity;
+                // Увеличиваем влияние наклона на движение
+                const moveX = (tilt / 45) * this.gyroSensitivity; // Изменили делитель с 90 на 45
                 
-                // Добавляем плавность движения
-                const smoothingFactor = 0.3;
+                // Уменьшаем плавность для более быстрого отклика
+                const smoothingFactor = 0.5; // Увеличили с 0.3 до 0.5
                 const targetX = this.doodler.x + moveX;
                 this.doodler.x += (targetX - this.doodler.x) * smoothingFactor;
                 

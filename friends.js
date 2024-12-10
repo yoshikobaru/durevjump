@@ -15,6 +15,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Функция для шаринга ссылки через Telegram
+    async function handleShareLink() {
+        const referralLink = await getReferralLink();
+        if (referralLink) {
+            const message = "Присоединяйся к DurovJump вместе со мной! 🎮";
+            const shareUrl = `https://t.me/share/url?text=${encodeURIComponent(message)}&url=${encodeURIComponent(referralLink)}`;
+            
+            if (window.Telegram && window.Telegram.WebApp) {
+                Telegram.WebApp.openTelegramLink(shareUrl);
+            } else {
+                window.open(shareUrl, "_blank");
+            }
+        }
+    }
+
     // Функция для получения списка приглашенных друзей
     async function getReferredFriends() {
         try {
@@ -60,20 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Обработчик клика по кнопке приглашения
     if (inviteButton) {
-        inviteButton.addEventListener('click', async () => {
-            const referralLink = await getReferralLink();
-            if (referralLink) {
-                // Используем метод showPopup для отображения окна выбора контакта
-                window.Telegram.WebApp.showPopup({
-                    title: 'Пригласить друга',
-                    message: `Присоединяйся к DurovJump! 🎮\nПрыгай вместе со мной и побей мой рекорд! 🏆\n${referralLink}`,
-                    buttons: [
-                        {type: 'default', text: 'Поделиться'},
-                        {type: 'cancel'}
-                    ]
-                });
-            }
-        });
+        inviteButton.addEventListener('click', handleShareLink);
     }
 
     // Обновляем список друзей при загрузке страницы

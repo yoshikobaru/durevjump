@@ -134,41 +134,91 @@ class DoodleGame {
     
     initMotionControls() {
         try {
-            // Включаем отслеживание движения
-            this.tg.enableClosingConfirmation();
-            this.tg.expand();
+            // Инициализируем Telegram WebApp
+            this.tg = window.Telegram.WebApp;
             
-            // Запрашиваем доступ к датчикам движения
-            this.tg.DeviceMotion.track(true);
+            // Устанавливаем чувствительность гироскопа
+            this.gyroSensitivity = 5;
             
-            // Подписываемся на события движения
-            window.addEventListener('devicemotion', (event) => {
-                if (!this.gameStarted || this.isGameOver) return;
-                
-                // Получаем ускорение по оси X
-                const acceleration = event.accelerationIncludingGravity.x;
-                
-                if (acceleration) {
-                    // Применяем движение на основе ускорения
-                    const moveX = -acceleration * this.gyroSensitivity;
-                    this.doodler.x += moveX;
+            if (window.DeviceOrientationEvent) {
+                // Для iOS 13+ нужно запросить разрешение
+                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    // Добавляем кнопку для запроса разрешения на iOS
+                    const button = document.createElement('button');
+                    button.innerHTML = 'Разрешить управление движением';
+                    button.style.position = 'fixed';
+                    button.style.top = '50%';
+                    button.style.left = '50%';
+                    button.style.transform = 'translate(-50%, -50%)';
+                    button.style.zIndex = '1000';
+                    button.style.padding = '10px';
+                    button.style.backgroundColor = '#007AFF';
+                    button.style.color = 'white';
+                    button.style.border = 'none';
+                    button.style.borderRadius = '5px';
                     
-                    // Ограничиваем движение по краям экрана
-                    if (this.doodler.x < 0) this.doodler.x = 0;
-                    if (this.doodler.x > this.width - this.doodler.width) {
-                        this.doodler.x = this.width - this.doodler.width;
-                    }
+                    button.onclick = () => {
+                        DeviceOrientationEvent.requestPermission()
+                            .then(permissionState => {
+                                if (permissionState === 'granted') {
+                                    this.setupDeviceOrientation();
+                                    button.remove();
+                                }
+                            })
+                            .catch(console.error);
+                    };
+                    
+                    document.body.appendChild(button);
+                } else {
+                    // Для Android и старых iOS
+                    this.setupDeviceOrientation();
                 }
-            });
-
-            this.gyroEnabled = true;
-            console.log('Управление движением активировано');
+                
+                this.gyroEnabled = true;
+                console.log('Управление движением активировано');
+            } else {
+                console.log('Устройство не поддерживает управление движением');
+                this.gyroEnabled = false;
+            }
         } catch (error) {
             console.error('Ошибка при инициализации управления движением:', error);
             this.gyroEnabled = false;
         }
     }
-    
+    setupDeviceOrientation() {
+        window.addEventListener('deviceorientation', (event) => {
+            if (!this.gameStarted || this.isGameOver) return;
+            
+            // Получаем угол наклона устройства
+            const tilt = event.gamma; // Наклон влево-вправо (-90 до 90)
+            
+            if (tilt !== null) {
+                // Преобразуем наклон в движение (уменьшаем чувствительность)
+                const moveX = (tilt / 90) * this.gyroSensitivity;
+                
+                // Добавляем плавность движения
+                const smoothingFactor = 0.3;
+                const targetX = this.doodler.x + moveX;
+                this.doodler.x += (targetX - this.doodler.x) * smoothingFactor;
+                
+                // Ограничиваем движение по краям экрана
+                if (this.doodler.x < 0) {
+                    this.doodler.x = 0;
+                }
+                if (this.doodler.x > this.width - this.doodler.width) {
+                    this.doodler.x = this.width - this.doodler.width;
+                }
+            }
+        }, true);
+        
+        // Добавляем обработчик для калибровки начального положения
+        let initialGamma = null;
+        window.addEventListener('deviceorientation', (event) => {
+            if (initialGamma === null && event.gamma !== null) {
+                initialGamma = event.gamma;
+            }
+        }, { once: true });
+    }
     initializeGame() {
         // Создаем платформы
         this.platforms = [];

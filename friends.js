@@ -63,10 +63,15 @@ document.addEventListener('DOMContentLoaded', function() {
         inviteButton.addEventListener('click', async () => {
             const referralLink = await getReferralLink();
             if (referralLink) {
-                // Используем метод share для открытия окна выбора контакта
-                window.Telegram.WebApp.share(
-                    `Присоединяйся к DurovJump! 🎮\nПрыгай вместе со мной и побей мой рекорд! 🏆\n${referralLink}`
-                );
+                // Используем метод showPopup для отображения окна выбора контакта
+                window.Telegram.WebApp.showPopup({
+                    title: 'Пригласить друга',
+                    message: `Присоединяйся к DurovJump! 🎮\nПрыгай вместе со мной и побей мой рекорд! 🏆\n${referralLink}`,
+                    buttons: [
+                        {type: 'default', text: 'Поделиться'},
+                        {type: 'cancel'}
+                    ]
+                });
             }
         });
     }

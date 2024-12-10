@@ -52,10 +52,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Функция обновления балансов
     function updateBalances() {
         // Обновляем общий баланс
-        const totalBalanceElement = document.querySelector('.text-lg.font-bold');
+        const totalBalanceElement = document.getElementById('totalBalanceDisplay');
         if (totalBalanceElement) {
             totalBalanceElement.textContent = `${balances.total} DPS`;
-            totalBalanceElement.classList.add('mt-[20px]', 'ml-[20px]');
         }
         
         // Обновляем балансы в карточках

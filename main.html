@@ -26,24 +26,28 @@
             </div>
 
             <!-- Основной контент с сеткой -->
-            <div class="w-full p-4 relative min-h-[220px]" 
+            <div class="w-full p-4 relative min-h-[320px]" 
                  style="background-image: linear-gradient(#CCCCCC 1px, transparent 1px), linear-gradient(90deg, #CCCCCC 1px, transparent 1px); 
                         background-size: 20px 20px;">
                 <!-- Название игры -->
                 <img src="durovjump.png" alt="Durov Jump" class="w-[150px] mb-[6px] ml-[32px]">
 
                 <div class="flex">
-                    <!-- Левая колонка с персонажем и счетом -->
-                    <div class="flex flex-col items-start ml-6">
-                        <img src="duriv.png" alt="Durov Character" class="w-20 h-auto mb-3">
-                        <div class="text-lg font-bold" style="font-family: 'Permanent Marker', cursive;">1,100 DPS</div>
-                        <div class="text-gray-600 text-xs uppercase">ОБЩИЙ СЧЁТ</div>
+                    <!-- Дуров и общий счет -->
+                    <div style="position: absolute; left: -70px; top: -10px;">
+                        <img src="durovblack.png" alt="Durov Character" style="width: 256px; height: auto; margin-bottom: -20px;">
+                        <div style="text-align: center; position: relative; z-index: 1;">
+                            <div style="position: absolute; left: 150px; width: 100%; text-align: center; bottom: 40px;">
+                                <div id="totalBalanceDisplay" style="font-size: 24px; font-weight: normal;">0 DPS</div>
+                                <div style="font-size: 12px; color: #666666; text-transform: uppercase;">ОБЩИЙ СЧЁТ</div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Правая колонка с баллами -->
-                    <div class="ml-auto space-y-4 -mt-16">
+                    <div style="margin-left: auto; display: flex; flex-direction: column; gap: 16px; margin-top: -120px;">
                         <div class="relative">
-                            <img src="Frame.png" alt="Задания +450 DPS" class="w-40">
+                            <img src="Frame.png" alt="Задания +450 DPS" style="width: 160px;">
                             <div class="absolute inset-0 flex flex-col items-center justify-center">
                                 <div class="text-[#4A90E2] text-xs mb-1">ЗАДАНИЯ</div>
                                 <div class="text-black font-bold text-base">+450 DPS</div>
@@ -51,15 +55,15 @@
                         </div>
                         
                         <div class="relative">
-                            <img src="Frame.png" alt="Друзья +450 DPS" class="w-40 -ml-8">
-                            <div class="absolute inset-0 flex flex-col items-center justify-center -ml-8">
+                            <img src="Frame.png" alt="Друзья +450 DPS" style="width: 160px; margin-left: -32px;">
+                            <div class="absolute inset-0 flex flex-col items-center justify-center" style="margin-left: -32px;">
                                 <div class="text-[#4A90E2] text-xs mb-1">ДРУЗЬЯ</div>
                                 <div class="text-black font-bold text-base">+450 DPS</div>
                             </div>
                         </div>
                         
                         <div class="relative">
-                            <img src="Frame.png" alt="Игра +450 DPS" class="w-40">
+                            <img src="Frame.png" alt="Игра +450 DPS" style="width: 160px;">
                             <div class="absolute inset-0 flex flex-col items-center justify-center">
                                 <div class="text-[#4A90E2] text-xs mb-1">ИГРА</div>
                                 <div class="text-black font-bold text-base">+450 DPS</div>
@@ -94,7 +98,7 @@
     <div id="game-page" class="page hidden w-full h-[calc(100vh-76px)] z-0 transition-all duration-300">
         <div class="relative w-full h-full">
             <div id="startScreen" class="absolute inset-0 flex flex-col items-center z-10 h-[calc(100vh-76px)]">
-                <!-- Фоновое изображение -->
+                <!-- Фновое изображение -->
                 <div class="absolute inset-0 w-full h-full">
                     <img src="bgMain.png" alt="Background" class="w-full h-full object-cover">
                 </div>
@@ -128,11 +132,9 @@
                     </div>
                     
                     <!-- Дуров с платформой внизу -->
-                    <div class="absolute bottom-0 left-8">
-                        <div class="relative">
-                            <img src="duriv.png" alt="Durov" class="w-24 mb-[-15px] z-10 relative">
-                            <img src="greenplatform.png" alt="Platform" class="w-36 relative z-0 -translate-y-8">
-                        </div>
+                    <div style="position: absolute; bottom: 50px; left: 0px;">
+                        <img src="durovblack.png" alt="Durov" style="width: 450px; height: auto; margin-bottom: -140px; margin-left: -110px; z-index: 20; position: relative;">
+                        <img src="greenplatform.png" alt="Platform" style="width: 144px; position: relative; z-index: 0; transform: translateY(-8px);">
                     </div>
                 </div>
             </div>
@@ -140,16 +142,16 @@
             <div id="score" class="absolute top-4 right-4 text-xl font-bold">0</div>
             <div id="gameOver" class="hidden absolute inset-0 w-full bg-white flex flex-col items-center justify-start z-10 h-[calc(100vh-76px)]">
                 <div class="text-center w-full h-full flex flex-col items-center" 
-                     style="background-image: url('background.png'); background-size: 20px 20px;">
+                     style="background-image: url('paper.jpg'); background-size: 500px 500px;">
                     
                     <!-- Увеличиваем отступ для Game -->
-                    <div class="flex flex-col items-start pl-8 mt-8">
-                        <img src="gamee.png" alt="Game" class="w-[80%] max-w-[500px] -ml-8">
-                        <img src="over.png" alt="Over" class="w-[45%] max-w-[200px] ml-12" style="position: relative; top: -55px;">
+                    <div class="flex flex-col items-start pl-8" style="margin-top: 76px;">
+                        <img src="gamee.png" alt="Game" class="w-[90%] max-w-[600px]" style="margin-left: -32px;">
+                        <img src="over.png" alt="Over" class="w-[55%] max-w-[250px]" style="margin-left: 63px; position: relative; top: -60px;">
                     </div>
                     
                     <!-- Подним статистику выше -->
-                    <div class="w-full px-8 -mt-2 text-left transform -translate-y-[60px]">
+                    <div class="w-full px-8" style="margin-top: 8px; transform: translateY(-60px);">
                         <div class="flex justify-between items-center mb-2">
                             <span class="text-lg">ВАШ СЧЕТ:</span>
                             <span id="finalScore" class="text-lg">0</span>
@@ -159,7 +161,7 @@
                             <span id="bestScore" class="text-lg">0</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-lg">ВЫИГРЫШ:</span>
+                            <span class="text-lg">ВЫИРЫШ:</span>
                             <span class="text-lg">+20 DPS</span>
                         </div>
                     </div>
@@ -168,8 +170,8 @@
                     <div class="flex flex-col items-center mt-auto mb-8">
                         <div class="flex items-center justify-center gap-4">
                             <div class="relative flex flex-col items-center">
-                                <img src="duriv.png" alt="Durov" class="w-32 h-36 relative z-10">
-                                <img src="greenplatform.png" alt="Platform" class="w-36 relative z-0 -translate-y-8">
+                                <img src="durovblack.png" alt="Durov" style="width: 900px; height: 400px; margin-bottom: -64px; margin-left: -80px; z-index: 20; position: relative; top: -10px;">
+                                <img src="greenplatform.png" alt="Platform" style="width: 160px; position: relative; z-index: 0; transform: translateY(-8px); top: -90px;">
                             </div>
                             <img src="btn.png" alt="Play Again" class="w-36 cursor-pointer -mt-48" id="restartBtn">
                         </div>

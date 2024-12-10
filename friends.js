@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Функция для отображения списка д��узей
+    // Функция для отображения списка друзей
     function displayFriends(friends) {
         friendsList.innerHTML = ''; // Очищаем текущий список
 
@@ -63,9 +63,9 @@ document.addEventListener('DOMContentLoaded', function() {
         inviteButton.addEventListener('click', async () => {
             const referralLink = await getReferralLink();
             if (referralLink) {
-                // Открываем окно выбора контакта в Telegram
-                window.Telegram.WebApp.switchInlineQuery(
-                    `Присоединяйся к Doodle Jump! 🎮\nПрыгай вместе со мной и побей мой рекорд! 🏆\n${referralLink}`
+                // Используем метод share для открытия окна выбора контакта
+                window.Telegram.WebApp.share(
+                    `Присоединяйся к DurovJump! 🎮\nПрыгай вместе со мной и побей мой рекорд! 🏆\n${referralLink}`
                 );
             }
         });

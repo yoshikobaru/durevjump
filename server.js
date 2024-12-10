@@ -313,7 +313,7 @@ const routes = {
         console.log('Поиск пользователя с telegramId:', telegramId);
         const user = await User.findOne({ where: { telegramId } });
         if (user) {
-          const inviteLink = `https://t.me/Dinosaur_Gamebot?start=${user.referralCode}`;
+          const inviteLink = `https://t.me/@DurovJump_Bot?start=${user.referralCode}`;
           console.log('Сгенерирована ссылка:', inviteLink);
           return { status: 200, body: { inviteLink } };
         } else {
